@@ -1,3 +1,5 @@
+### Put secu_logging.py to right location
+/opt/daemon/service/secu_logging.py
 
 ### Define the systemd service unit
 
