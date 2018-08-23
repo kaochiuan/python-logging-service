@@ -13,9 +13,10 @@ Description=secu_logging service
 
 [Service]
 Type=simple
-ExecStart=/usr/bin/python3 /opt/daemon/service/secu_unix_stream_logging.py
+Restart=on-failure
+RestartSec=3
 TimeoutStopSec=20
-
+ExecStart=/usr/bin/python3 /opt/daemon/service/secu_unix_stream_logging.py
 
 [Install]
 WantedBy=multi-user.target
@@ -53,9 +54,10 @@ Requires=secu_logging.socket
 
 [Service]
 Type=simple
-ExecStart=/usr/bin/python3 /opt/daemon/service/secu_logging.py
+Restart=on-failure
+RestartSec=3
 TimeoutStopSec=20
-
+ExecStart=/usr/bin/python3 /opt/daemon/service/secu_logging.py
 
 [Install]
 WantedBy=multi-user.target
