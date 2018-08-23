@@ -3,7 +3,6 @@ import pickle
 import logging
 import logging.handlers
 import socketserver
-import socket
 import struct
 from logging.handlers import RotatingFileHandler
 
@@ -14,7 +13,7 @@ class LogRecordStreamHandler(socketserver.StreamRequestHandler):
     This basically logs the record using whatever logging policy is
     configured locally.
     """
-    logging.basicConfig(level=logging.INFO, format='%(relativeCreated)6d %(process)d %(message)s')
+    logging.basicConfig(level=logging.INFO, format='%(relativeCreated)6d %(threadName)s %(message)s')
     logger = logging.getLogger(__name__)
     if logger.hasHandlers():
         for handler in logger.handlers:
@@ -48,17 +47,19 @@ class LogRecordStreamHandler(socketserver.StreamRequestHandler):
         self.logger.handle(record)
 
 
-class LogRecordSocketReceiver(socketserver.TCPServer):
-    """simple TCP socket-based logging receiver suitable for testing.
+class LogRecordSocketReceiver(socketserver.UnixStreamServer):
+    """simple unix domain socket-based logging receiver suitable for testing.
     """
     SYSTEMD_FIRST_SOCKET_FD = 3
     allow_reuse_address = 1
 
-    def __init__(self, host='localhost',
-                 port=logging.handlers.DEFAULT_TCP_LOGGING_PORT,
+    def __init__(self, server_address='/tmp/uds_socket',
                  handler=LogRecordStreamHandler):
-        socketserver.TCPServer.__init__(self, (host, port), handler, bind_and_activate=False)
-        self.socket = socket.fromfd(self.SYSTEMD_FIRST_SOCKET_FD, self.address_family, self.socket_type)
+        import os
+        if os.path.exists(server_address):
+            os.remove(server_address)
+        socketserver.UnixStreamServer.__init__(self, str(server_address), handler, bind_and_activate=True)
+
         self.abort = 0
         self.timeout = 1
         self.log_name = None
@@ -76,10 +77,8 @@ class LogRecordSocketReceiver(socketserver.TCPServer):
 
 
 def main():
-    # logging.basicConfig(
-    #     format="%(relativeCreated)5d %(name)-15s %(levelname)-8s %(message)s")
     tcp_server = LogRecordSocketReceiver()
-    print("About to start TCP server...")
+    print("About to start UnixStream server...")
     tcp_server.serve_until_stopped()
 
 
