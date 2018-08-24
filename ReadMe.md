@@ -1,10 +1,10 @@
 ## UnixStreamServer(Unix domain socket) Solution
 
-1. Put logging program to right location
+### 1. Put logging program to right location
 
 /opt/daemon/service/secu_unix_stream_logging.py
 
-2. Define the systemd service unit
+### 2. Define the systemd service unit
 
 ~/.config/systemd/user/secu_logging.service
 ```
@@ -22,28 +22,28 @@ ExecStart=/usr/bin/python3 /opt/daemon/service/secu_unix_stream_logging.py
 WantedBy=multi-user.target
 ```
 
-3. Start Logging Service
+### 3. Start Logging Service
 ```
 systemctl --user daemon-reload
 systemctl --user start secu_logging.service
 ```
 
-4. Check status
+### 4. Check status
 ```
 systemctl --user status secu_logging.service
 ```
 
-5. Stop service
+### 5. Stop service
 ```
 systemctl --user stop secu_logging.service
 ```
 
 ## TCP Server Solution
 
-1. Put logging program to right location
+### 1. Put logging program to right location
 /opt/daemon/service/secu_logging.py
 
-2. Define the systemd service unit
+### 2. Define the systemd service unit
 
 ~/.config/systemd/user/secu_logging.service
 ```
@@ -63,7 +63,7 @@ ExecStart=/usr/bin/python3 /opt/daemon/service/secu_logging.py
 WantedBy=multi-user.target
 ```
 
-3. Define the systemd socket unit
+### 3. Define the systemd socket unit
 
 ~/.config/systemd/user/secu_logging.socket
 ```
@@ -78,17 +78,17 @@ ListenStream=127.0.0.1:9020
 WantedBy=sockets.target
 ```
 
-4. Check status
+### 4. Check status
 ```
 systemctl --user status secu_logging.socket
 ```
 
-5. Stop service
+### 5. Stop service
 ```
 systemctl --user stop secu_logging.socket
 ```
 
-6. Start Listening Socket
+### 6. Start Listening Socket
 ```
 systemctl --user daemon-reload
 systemctl --user start secu_logging.socket
@@ -96,7 +96,7 @@ systemctl --user start secu_logging.socket
 
 ## Check service received messages
 
-### Check received content by journalctl
+### journalctl
 ```
 journalctl -f --user-unit secu_logging.service
 ```

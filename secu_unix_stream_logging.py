@@ -53,7 +53,7 @@ class LogRecordSocketReceiver(socketserver.UnixStreamServer):
     SYSTEMD_FIRST_SOCKET_FD = 3
     allow_reuse_address = 1
 
-    def __init__(self, server_address='/tmp/uds_socket',
+    def __init__(self, server_address='/tmp/secu_logging.sock',
                  handler=LogRecordStreamHandler):
         import os
         if os.path.exists(server_address):
